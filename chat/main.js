@@ -13,6 +13,12 @@ var app = http.createServer(function (request, response) {
 var io = require('socket.io').listen(app);
 
 io.sockets.on('connection', function(socket) {
+
+    socket.on('login', function(data){
+	socket.emit("message_to_client",{ message: "Welcome to our gilma chat room : " + data["message"] + "."});
+   	io.sockets.emit("add_people",{ message: data["message"] }); 
+    });		
+
     socket.on('message_to_server', function(data) {
         io.sockets.emit("message_to_client",{ message: data["message"] });
     });

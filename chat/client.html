@@ -4,21 +4,40 @@
         <script src="/socket.io/socket.io.js"></script>
         <script type="text/javascript">
             // our socket.io code goes here
-       		var socketio = io.connect("127.0.0.1:9001");
+       		
+		function logi()
+		{
+		//socketio = io.connect("127.0.0.1:9001");
+		
+		var msg = document.getElementById("message_input").value;
+                uname = msg;
+		socketio.emit("login", { message : msg});		
+		}
+		
+		var uname = "";
+		var socketio = io.connect("127.0.0.1:9001");
 		socketio.on("message_to_client", function(data) {
    		 document.getElementById("chatlog").innerHTML = ("<hr/>" +
    		 data['message'] + document.getElementById("chatlog").innerHTML);
 		});
 		
+		socketio.on("add_people", function(data) {
+                 document.getElementById("people").innerHTML = ( 
+                 document.getElementById("people").innerHTML) + "  " + data['message'];
+                });
+		
 		function sendMessage() {
  		   var msg = document.getElementById("message_input").value;
-    		socketio.emit("message_to_server", { message : msg});
+    		socketio.emit("message_to_server", { message : uname+": "+msg});
 		}
 	 </script>
     </head>
     <body>
         <input type="text" id="message_input"/>
-        <button onclick="sendMessage()">send</button>
-        <div id="chatlog"></div>
+        <button onclick="logi()">login</button>
+	<button onclick="sendMessage()">send</button>
+        <div id="people"><h3>People online:</h3></div>
+	<h3>Your chat goes here</h3>
+	<div id="chatlog"></div>
     </body>
-</html>
+-</html>
