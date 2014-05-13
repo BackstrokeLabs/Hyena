@@ -4,6 +4,13 @@ var net = require('net')
 var sockets = [];
 var server = net.createServer(function(socket){
 	sockets.push(socket);
+
+	socket.on('join', function(client){
+                client.emit("Youhave joined the gilma room");
+           });
+        
+
+
 	
 	
 	socket.on('data', function(data){
