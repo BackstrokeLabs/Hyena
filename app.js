@@ -15,21 +15,28 @@ app.get('/',function(req, res) {
 
 io.sockets.on('connection', function(socket){
 
+	socket.on('new user', function(data, callback) {
+	data=data.trim();
+	if(usernames.indexOf(data) != -1){
+			callback(false);
+	} else{
+		callback(true);
+		socket.username = data;
+		usernames.push(socket.username);	
+		io.sockets.emit('user list',usernames); 
+		}
+	});
+
 	socket.on('send message', function(data) {
-		io.sockets.emit('new message',data);   //send to everyone including the same client
+		io.sockets.emit('new message',{'message': data,'username': socket.username});   //send to everyone including the same client
 		/*socket.broadcast.emit('new message',data);*/ //send to everyone excluding the same client
 	});
 
-	socket.on('new user', function(data, callback) {
-		if(usernames.indexof(data) != -1){
-				callback(false);
-		} else{
-			callback(true);
-			socket.username = data.trim();
-			usernames.push(socket.username);	
-			io.sockets.emit('user list',usernames); 
-		}
-		
-		
+	socket.on('disconnect', function(data) {
+		if(!socket.username) return;
+		usernames.splice(usernames.indexOf(socket.username),1);
+		io.sockets.emit('user list',usernames); 
 	});
+
+
 });

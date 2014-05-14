@@ -1,6 +1,10 @@
-box{
+#chatBox{
 	height:500px;
 	width:400px;
+}
+
+#chatWrap{
+	float: left;
 	border:2px solid;
 	border-color:#000000;
 	/*border-radius:25px;*/
@@ -9,4 +13,3 @@ box{
 #contentWrap{
 	display: none;
 }
-	

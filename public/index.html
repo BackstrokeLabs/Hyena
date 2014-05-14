@@ -7,7 +7,7 @@
 
 	<div id="usernameWrap">
 		<p>Enter username:</p>
-		<p id="UsernameError" class="err"></p>
+		<p id="usernameError" class="err"></p>
 		<form id="setUsername">
 			<input size="35" id="username"></input>
 			<input type="submit"></input>
@@ -16,13 +16,13 @@
 
 	<div id="contentWrap">	
 		<div id="chatWrap">
-			<div id="chatBox" class="box"></div>
+			<div id="chatBox"></div>
 			<form id="sendMessage">
 				<input size="50" id="message"></input>
 				<input type="submit"></input>
 			</form>
 		</div>
-		<div id="userListBox" class="box"></div>
+		<div id="userListBox"></div>
 	</div>
 
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -43,7 +43,10 @@
 				event.preventDefault();				//prevent default behaviour. no need form to submit the page and refresh
 				socket.emit('new user',$usernameTextBox.val(), function(isUserUnique){
 					if(isUserUnique){
-
+						$('#usernameWrap').hide();
+						$('#contentWrap').show();
+					} else {
+						$('#usernameError').html("Username already in use. Please enter a different username to continue.")
 					}
 				});
 				$usernameTextBox.val('');
@@ -56,11 +59,15 @@
 			});
 
 			socket.on('user list', function(data) {
-				$chatBox.append(data+"<br/>");
+				var userList = '';
+				for(var i = 0; i < data.length; i++) {
+					userList+= data[i]+'<br/>';
+				}
+				$userListBox.html(userList)
 			});
 
 			socket.on('new message', function(data) {
-				$chatBox.append(data+"<br/>");
+				$chatBox.append("<b>"+ data.username+ "</b> : "+ data.message+"<br/>");
 			});
 			
 		});
