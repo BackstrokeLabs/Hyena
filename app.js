@@ -24,6 +24,7 @@ io.sockets.on('connection', function(socket){
 		socket.username = data;
 		usernames.push(socket.username);	
 		io.sockets.emit('user list',usernames); 
+		io.sockets.emit('new message',{'message': socket.username+' has joined newly','username': '**info**'});
 		}
 	});
 
@@ -36,6 +37,7 @@ io.sockets.on('connection', function(socket){
 		if(!socket.username) return;
 		usernames.splice(usernames.indexOf(socket.username),1);
 		io.sockets.emit('user list',usernames); 
+		io.sockets.emit('new message',{'message': socket.username+' disconnected from room','username': '**info**'});
 	});
 
 

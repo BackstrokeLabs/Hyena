@@ -6,11 +6,11 @@
 <body>
 
 	<div id="usernameWrap">
-		<p>Enter username:</p>
+		<p><h2>Enter username:</h2></p>
 		<p id="usernameError" class="err"></p>
 		<form id="setUsername">
-			<input size="35" id="username"></input>
-			<input type="submit"></input>
+			<input id="username"></input>
+			<input type="submit" class="Button"></input>
 		</form>
 	</div>
 
@@ -19,10 +19,12 @@
 			<div id="chatBox"></div>
 			<form id="sendMessage">
 				<input size="50" id="message"></input>
-				<input type="submit"></input>
+				<input type="submit" class="Button"></input>
 			</form>
 		</div>
+		<p><h2>&nbsp;&nbsp;Users Online</h2></p>
 		<div id="userListBox"></div>
+
 	</div>
 
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -61,13 +63,14 @@
 			socket.on('user list', function(data) {
 				var userList = '';
 				for(var i = 0; i < data.length; i++) {
-					userList+= data[i]+'<br/>';
+					userList+= '&nbsp;&nbsp;&nbsp; * '+data[i]+'<br/>';
+					//userList+= '<div class="user">'+data[i]+'</div><br/><br/><br/>';
 				}
 				$userListBox.html(userList)
 			});
 
 			socket.on('new message', function(data) {
-				$chatBox.append("<b>"+ data.username+ "</b> : "+ data.message+"<br/>");
+				$chatBox.append("<div class=msg><b>"+ data.username+ "</b> : "+ data.message+"</div><br/>");
 			});
 			
 		});
