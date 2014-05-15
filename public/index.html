@@ -1,0 +1,79 @@
+<html>
+<head>
+	<title>BS Chat Application</title>
+	<link rel="stylesheet" href="/style.css" type="text/css" />
+</head>
+<body>
+
+	<div id="usernameWrap">
+		<p><h2>Enter username:</h2></p>
+		<p id="usernameError" class="err"></p>
+		<form id="setUsername">
+			<input id="username"></input>
+			<input type="submit" class="Button"></input>
+		</form>
+	</div>
+
+	<div id="contentWrap">	
+		<div id="chatWrap">
+			<div id="chatBox"></div>
+			<form id="sendMessage">
+				<input size="50" id="message"></input>
+				<input type="submit" class="Button"></input>
+			</form>
+		</div>
+		<p><h2>&nbsp;&nbsp;Users Online</h2></p>
+		<div id="userListBox"></div>
+
+	</div>
+
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		jQuery(function($) {
+			var socket = io.connect();
+			var $messageForm = $('#sendMessage');
+			var $usernameForm = $('#setUsername');
+			var $messageTextBox = $('#message');
+			var $usernameTextBox = $('#username');
+			var $chatBox = $('#chatBox');
+			var $userListBox = $('#userListBox');
+
+			var $content = $('#contentWrap');
+
+			$usernameForm.submit(function(event) {
+				event.preventDefault();				//prevent default behaviour. no need form to submit the page and refresh
+				socket.emit('new user',$usernameTextBox.val(), function(isUserUnique){
+					if(isUserUnique){
+						$('#usernameWrap').hide();
+						$('#contentWrap').show();
+					} else {
+						$('#usernameError').html("Username already in use. Please enter a different username to continue.")
+					}
+				});
+				$usernameTextBox.val('');
+			});
+
+			$messageForm.submit(function(event) {
+				event.preventDefault();				//prevent default behaviour. no need form to submit the page and refresh
+				socket.emit('send message',$messageTextBox.val());
+				$messageTextBox.val('');
+			});
+
+			socket.on('user list', function(data) {
+				var userList = '';
+				for(var i = 0; i < data.length; i++) {
+					userList+= '&nbsp;&nbsp;&nbsp; * '+data[i]+'<br/>';
+					//userList+= '<div class="user">'+data[i]+'</div><br/><br/><br/>';
+				}
+				$userListBox.html(userList)
+			});
+
+			socket.on('new message', function(data) {
+				$chatBox.append("<div class=msg><b>"+ data.username+ "</b> : "+ data.message+"</div><br/>");
+			});
+			
+		});
+	</script>
+</body>
+</html>
