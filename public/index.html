@@ -2,29 +2,44 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>BackStroke Chat Room</title>
 
     <meta name="generator" content="Bootply" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-glyphicons.css" type="text/css" rel="stylesheet">
     <link href="style.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.js"></script>
   </head>
   <body>
 
-    <div id="usernameWrap">
-      <p><h2>Enter username:</h2></p>
-      <p id="usernameError" class="err"></p>
-      <form id="setUsername">
-        <input id="username"></input>
-        <input type="submit" class="Button"></input>
-      </form>
+    <!-- Code to disply the modal for getting username from user -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="purchaseLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="userNameBox">Enter Username: </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-append">
+                      <input id="username" type="text" class="form-control pull-left" placeholder="Enter Username ..." ng-minlength="1" ng-trim="true">
+                      <p id="usernameError" class="err"></p></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="usernameSubmit" type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-        
         <!-- Wrap all page content here -->
 <div id="wrap">
   
@@ -58,6 +73,7 @@
           </li>
         </ul>
       </div>/.nav-collapse -->
+
     </div>
     <h2 class="text-center"> BS Chat Room</h2>
   </div>
@@ -98,9 +114,8 @@
   </div>
 </div>
  
-    <script type='text/javascript' src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
         <!-- JavaScript jQuery code from Bootply.com editor -->
-    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
       jQuery(function($) {
@@ -114,7 +129,34 @@
 
         var $content = $('#wrap');
         var chatBoxColor;
-        $usernameForm.submit(function(event) {
+
+
+        $('#myModal').modal({
+          backdrop: 'static',
+          keyboard: false
+        })
+
+        $('#myModal').modal('show');
+
+        $('#myModal').on('shown.bs.modal', function () {
+          $('#username').focus();
+        });
+
+        $('#myModal').on("click", "#usernameSubmit", function(event) { 
+          if($usernameTextBox.val().trim().length === 0) {
+              $('#usernameError').html("<br/><span class=\"label label-danger\">Username invalid or already in use. Please enter a different username to continue.</span>")
+          }
+          socket.emit('new user',$usernameTextBox.val(), function(isUserUnique){
+            if(isUserUnique){
+              $('#myModal').modal('hide');
+            } else {
+              $('#usernameError').html("<br/><span class=\"label label-danger\">Username invalid or already in use. Please enter a different username to continue.</span>")
+            }
+          });          
+
+        });
+
+       /* $usernameForm.submit(function(event) {
           event.preventDefault();       //prevent default behaviour. no need form to submit the page and refresh
           socket.emit('new user',$usernameTextBox.val(), function(isUserUnique){
             if(isUserUnique){
@@ -125,22 +167,20 @@
             }
           });
           $usernameTextBox.val('');
-        });
+        });*/
 
         $messageForm.submit(function(event) {
           event.preventDefault();       //prevent default behaviour. no need form to submit the page and refresh
-          socket.emit('send message',$messageTextBox.val());
-          $messageTextBox.val('');
+          if($messageTextBox.val().length > 0) {
+              socket.emit('send message',$messageTextBox.val());
+              $messageTextBox.val('');
+          }
         });
 
         socket.on('user list', function(data) {
           var userList = '<h2 class="text-center">Users Online</h2>';
           for(var i = 0; i < data.length; i++) {
-           // userList+= '&nbsp;&nbsp;&nbsp; * '+data[i]+'<br/>';
-
             userList+= "<div class=\"alert alert-warning\">"+data[i]+"</div>";
-
-            //userList+= '<div class="user">'+data[i]+'</div><br/><br/><br/>';
           }
           $userListBox.html(userList)
         });
@@ -153,6 +193,9 @@
         	}
 
           $chatBox.append("<div class=\"alert alert-"+chatBoxColor+"\"><b>"+ data.username+ "</b> : "+ data.message+"</div>");
+
+          var objDiv = document.getElementById("chatBox");  //this will make scroll bar stay at the bottom always, so new messages can be read
+          objDiv.scrollTop = objDiv.scrollHeight;
         });
         
       });
