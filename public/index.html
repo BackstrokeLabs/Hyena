@@ -1,79 +1,156 @@
-<html>
-<head>
-	<title>BS Chat Application</title>
-	<link rel="stylesheet" href="/style.css" type="text/css" />
-</head>
-<body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BackStroke Chat Room</title>
 
-	<div id="usernameWrap">
-		<p><h2>Enter username:</h2></p>
-		<p id="usernameError" class="err"></p>
-		<form id="setUsername">
-			<input id="username"></input>
-			<input type="submit" class="Button"></input>
-		</form>
-	</div>
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-glyphicons.css" type="text/css" rel="stylesheet">
+    <link href="style.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
 
-	<div id="contentWrap">	
-		<div id="chatWrap">
-			<div id="chatBox"></div>
-			<form id="sendMessage">
-				<input size="50" id="message"></input>
-				<input type="submit" class="Button"></input>
-			</form>
-		</div>
-		<p><h2>&nbsp;&nbsp;Users Online</h2></p>
-		<div id="userListBox"></div>
+    <div id="usernameWrap">
+      <p><h2>Enter username:</h2></p>
+      <p id="usernameError" class="err"></p>
+      <form id="setUsername">
+        <input id="username"></input>
+        <input type="submit" class="Button"></input>
+      </form>
+    </div>
 
-	</div>
+        
+        <!-- Wrap all page content here -->
+<div id="wrap">
+  
+  <!-- Fixed navbar -->
+  <div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+       <!-- <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">BS Chat Room</a>-->
+      </div>
+    <!--  <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Action</a></li>
+              <li><a href="#">Another action</a></li>
+              <li><a href="#">Something else here</a></li>
+              <li class="divider"></li>
+              <li class="dropdown-header">Nav header</li>
+              <li><a href="#">Separated link</a></li>
+              <li><a href="#">One more separated link</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>/.nav-collapse -->
+    </div>
+    <h2 class="text-center"> BS Chat Room</h2>
+  </div>
+  
+  <!-- Begin page content -->
+  <div class="center-container">
+    <div class="center-row">
+      <div class="col-xs-4 bg-one text-center" id="userListBox"><h2>Users Online</h2>
+        <!-- user list goes here-->
+      </div>
+      <div class="col-xs-8 bg-two" id="chatBox"><h2 class="text-center">Chat</h2>
+        <!-- message goes here-->
+        <div class="alert alert-success">asd</div>
+        <div class="alert alert-info">...</div>
+        <div class="alert alert-warning">...</div>
+        <div class="alert alert-danger">...</div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-4">.col-</div>
+      <div class="col-xs-8">
+        <form id="sendMessage" class="form-horizontal" role="form">
+          <div class="form-group">
+            <div class="col-sm-10">
+                <input id="message" type="text" class="form-control" placeholder="Enter Message here ...">
+            </div>
+            <div class="col-sm-2">
+              <button type="submit" class="btn btn-primary">Submit     
+                <span class="glyphicon glyphicon-comment"></span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+  </div>
+</div>
 
-	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<script src="/socket.io/socket.io.js"></script>
-	<script>
-		jQuery(function($) {
-			var socket = io.connect();
-			var $messageForm = $('#sendMessage');
-			var $usernameForm = $('#setUsername');
-			var $messageTextBox = $('#message');
-			var $usernameTextBox = $('#username');
-			var $chatBox = $('#chatBox');
-			var $userListBox = $('#userListBox');
+<div id="footer">
+  <div class="container">
+    <small class="bg-primary">powered by backstroke labs</small></p>
+  </div>
+</div>
+ 
+    <script type='text/javascript' src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+        <!-- JavaScript jQuery code from Bootply.com editor -->
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      jQuery(function($) {
+        var socket = io.connect();
+        var $messageForm = $('#sendMessage');
+        var $usernameForm = $('#setUsername');
+        var $messageTextBox = $('#message');
+        var $usernameTextBox = $('#username');
+        var $chatBox = $('#chatBox');
+        var $userListBox = $('#userListBox');
 
-			var $content = $('#contentWrap');
+        var $content = $('#wrap');
 
-			$usernameForm.submit(function(event) {
-				event.preventDefault();				//prevent default behaviour. no need form to submit the page and refresh
-				socket.emit('new user',$usernameTextBox.val(), function(isUserUnique){
-					if(isUserUnique){
-						$('#usernameWrap').hide();
-						$('#contentWrap').show();
-					} else {
-						$('#usernameError').html("Username already in use. Please enter a different username to continue.")
-					}
-				});
-				$usernameTextBox.val('');
-			});
+        $usernameForm.submit(function(event) {
+          event.preventDefault();       //prevent default behaviour. no need form to submit the page and refresh
+          socket.emit('new user',$usernameTextBox.val(), function(isUserUnique){
+            if(isUserUnique){
+              $('#usernameWrap').hide();
+              $content.show();
+            } else {
+              $('#usernameError').html("Username already in use. Please enter a different username to continue.")
+            }
+          });
+          $usernameTextBox.val('');
+        });
 
-			$messageForm.submit(function(event) {
-				event.preventDefault();				//prevent default behaviour. no need form to submit the page and refresh
-				socket.emit('send message',$messageTextBox.val());
-				$messageTextBox.val('');
-			});
+        $messageForm.submit(function(event) {
+          event.preventDefault();       //prevent default behaviour. no need form to submit the page and refresh
+          socket.emit('send message',$messageTextBox.val());
+          $messageTextBox.val('');
+        });
 
-			socket.on('user list', function(data) {
-				var userList = '';
-				for(var i = 0; i < data.length; i++) {
-					userList+= '&nbsp;&nbsp;&nbsp; * '+data[i]+'<br/>';
-					//userList+= '<div class="user">'+data[i]+'</div><br/><br/><br/>';
-				}
-				$userListBox.html(userList)
-			});
+        socket.on('user list', function(data) {
+          var userList = '';
+          for(var i = 0; i < data.length; i++) {
+            userList+= '&nbsp;&nbsp;&nbsp; * '+data[i]+'<br/>';
+            //userList+= '<div class="user">'+data[i]+'</div><br/><br/><br/>';
+          }
+          $userListBox.html(userList)
+        });
 
-			socket.on('new message', function(data) {
-				$chatBox.append("<div class=msg><b>"+ data.username+ "</b> : "+ data.message+"</div><br/>");
-			});
-			
-		});
-	</script>
-</body>
+        socket.on('new message', function(data) {
+          $chatBox.append("<div class=\"alert alert-success\"><b>"+ data.username+ "</b> : "+ data.message+"</div>");
+        });
+        
+      });
+    </script>
+  </body>
 </html>

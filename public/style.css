@@ -1,46 +1,91 @@
-html, body {
-    height: 100%;
+html,
+body {
+  height: 100%;
 }
 
-#chatBox{
-	height: 80%;
-    overflow-y: auto;
-    padding: 10px;
-    border: 1px solid #333;
+#wrap {
+  min-height: 100%;
+  height: 100%;
+  /* Negative indent footer by its height */
+  margin: 0 auto -82px 0;
+  /* Pad bottom by footer height */
+  padding: 0 0 80px 0;
+    display: none;
 }
 
-/*
-.user {
-	float: right;
-	display: inline;
-    background-color: #333;
-    margin: 5px;
-    padding: 10px;
-    color: #fff;
-}*/
-
-#username {
-    width: 20em;
+/* Set the fixed height of the footer here */
+#footer {
+  height: 80px;
+  background-color: #f5f5f5;
 }
 
-#chatWrap{
-	float: left;
-	border:2px solid;
-	border-color:#000000;
-	/*border-radius:25px;*/
+#wrap > .center-container {
+  padding: 50px 0 0 0;
+  margin:0;
 }
 
-#contentWrap{
-	display: none;
+#footer > .container {
+  padding-top:5px
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
-.msg {
-    border:1px solid;
-    border-color:#000000;
-    color: rgb(250,0,0);
-    font-size: 20px;
+#fixed
+{
+    background-color: #000000;
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
 
-.msg:hover{
-    background-color: #ccc;
+.center-container {
+  height:100%;
+  display: table;
+  width:100%;
+  margin:0;
+}
+
+.center-row {
+  height:50%;
+  width:100%;
+  display: table-row;
+}
+  
+.center-row > div {
+  height:100%;
+  display: table-cell;
+  border:5px solid #eee;
+  color:#fff;
+  vertical-align:middle;
+}
+
+.bg-one {
+  background-image: -webkit-gradient(
+  linear,
+  left top,
+  left bottom,
+  color-stop(0, #000000),
+  color-stop(1, #B3B3B3)
+);
+background-image: -o-linear-gradient(bottom, #000000 0%, #B3B3B3 100%);
+background-image: -moz-linear-gradient(bottom, #000000 0%, #B3B3B3 100%);
+background-image: -webkit-linear-gradient(bottom, #000000 0%, #B3B3B3 100%);
+background-image: -ms-linear-gradient(bottom, #000000 0%, #B3B3B3 100%);
+background-image: linear-gradient(to bottom, #000000 0%, #B3B3B3 100%);
+  overflow-y: auto;
+}
+.bg-two {
+background-image: -webkit-gradient(
+  linear,
+  left top,
+  left bottom,
+  color-stop(0, #000000),
+  color-stop(1, #B3B3B3)
+);
+background-image: -o-linear-gradient(bottom, #000000 0%, #B3B3B3 100%);
+background-image: -moz-linear-gradient(bottom, #000000 0%, #B3B3B3 100%);
+background-image: -webkit-linear-gradient(bottom, #000000 0%, #B3B3B3 100%);
+background-image: -ms-linear-gradient(bottom, #000000 0%, #B3B3B3 100%);
+background-image: linear-gradient(to bottom, #000000 0%, #B3B3B3 100%);
+      overflow-y: auto;
 }
