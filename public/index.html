@@ -96,6 +96,7 @@
           <div class="form-group">
             <div class="col-sm-10">
                 <input id="message" type="text" class="form-control" placeholder="Enter Message here ...">
+                <p id="privateMessageError" class="err"></p>
             </div>
             <div class="col-sm-2">
               <button type="submit" class="btn btn-primary">Submit     
@@ -144,13 +145,16 @@
 
         $('#myModal').on("click", "#usernameSubmit", function(event) { 
           if($usernameTextBox.val().trim().length === 0) {
-              $('#usernameError').html("<br/><span class=\"label label-danger\">Username invalid or already in use. Please enter a different username to continue.</span>")
+              $('#usernameError').html("<br/><span class=\"label label-danger\">Username invalid or already in use. Please enter a different username to continue.</span>");
           }
+          
+          myUsername = $usernameTextBox.val().trim();
+
           socket.emit('new user',$usernameTextBox.val(), function(isUserUnique){
             if(isUserUnique){
               $('#myModal').modal('hide');
             } else {
-              $('#usernameError').html("<br/><span class=\"label label-danger\">Username invalid or already in use. Please enter a different username to continue.</span>")
+              $('#usernameError').html("<br/><span class=\"label label-danger\">Username invalid or already in use. Please enter a different username to continue.</span>");
             }
           });          
 
@@ -172,7 +176,9 @@
         $messageForm.submit(function(event) {
           event.preventDefault();       //prevent default behaviour. no need form to submit the page and refresh
           if($messageTextBox.val().length > 0) {
-              socket.emit('send message',$messageTextBox.val());
+              socket.emit('send message',$messageTextBox.val(), function(privateMsgError){
+                $('#privateMessageError').html("<span class=\"label label-danger\">"+ privateMsgError +"</span>");
+              });
               $messageTextBox.val('');
           }
         });
@@ -193,6 +199,20 @@
         	}
 
           $chatBox.append("<div class=\"alert alert-"+chatBoxColor+"\"><b>"+ data.username+ "</b> : "+ data.message+"</div>");
+
+          var objDiv = document.getElementById("chatBox");  //this will make scroll bar stay at the bottom always, so new messages can be read
+          objDiv.scrollTop = objDiv.scrollHeight;
+        });
+
+        socket.on('new private message', function(data) {
+            chatBoxColor="info";  //i.e. BLUE          
+
+          if(data.ownMessage === 'false') {
+            $chatBox.append("<div class=\"alert alert-"+chatBoxColor+"\"><b>"+ data.username+ "</b> : "+ data.message+"</div>");  
+          }
+          else {
+            $chatBox.append("<div class=\"alert alert-"+chatBoxColor+"\"><b>"+ myUsername + " -> " + data.username+ "</b> : "+ data.message+"</div>");  
+          }
 
           var objDiv = document.getElementById("chatBox");  //this will make scroll bar stay at the bottom always, so new messages can be read
           objDiv.scrollTop = objDiv.scrollHeight;
