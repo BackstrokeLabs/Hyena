@@ -35,15 +35,15 @@ io.sockets.on('connection', function(socket){
 
 	socket.on('send message', function(data,callback) {
 		msg = data.trim();
-		privateKeyword = msg.split(" ")[0];
+		keyword = msg.split(" ")[0];
 
-		if(privateKeyword === '/chat' || privateKeyword === '/c') {
+		if(keyword === '/chat' || keyword === '/c') {
 			privateUser = msg.split(" ")[1];
 
 			if(privateUser !== socket.username) {
 				if(privateUser in userObj) {
 					console.log('private message');
-					privateMsg = msg.substring(privateKeyword.length+privateUser.length+1).trim();
+					privateMsg = msg.substring(keyword.length+privateUser.length+1).trim();
 					if( privateMsg.length > 0 ) {
 						userObj[privateUser].emit('new private message',{'message': privateMsg,'username': socket.username,'ownMessage': 'false'});  //sending message to the private user
 						socket.emit('new private message',{'message': privateMsg,'username': privateUser,'ownMessage': 'true'});	//sending message to the owner of the message, for marking whom he/she has sent the message
@@ -62,6 +62,9 @@ io.sockets.on('connection', function(socket){
 				console.log('Error! Cannot send private message to oneself');
 				callback('Error! Cannot send private message to oneself');
 			}
+		}
+		else if(keyword === '/help' || keyword === '/h'){
+			socket.emit('new message',{'message': 'For sending private message use <b>/chat username message</b> or <b>/c username message</b>','username': '**system**'});  
 		}
 		else {
 			io.sockets.emit('new message',{'message': data,'username': socket.username});   //send to everyone including the same client

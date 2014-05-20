@@ -186,12 +186,13 @@
         socket.on('user list', function(data) {
           var userList = '<h2 class="text-center">Users Online</h2>';
           for(var i = 0; i < data.length; i++) {
-            userList+= "<div class=\"alert alert-warning\">"+data[i]+"</div>";
+            userList+= "<div class=\"userClass alert alert-warning\" id=\""+data[i]+"\">"+data[i]+"</div>";
           }
           $userListBox.html(userList)
         });
 
         socket.on('new message', function(data) {
+          $('#privateMessageError').html("");
         	if(data.username.indexOf('**info**') != -1){
 				    chatBoxColor="danger";  //i.e. RED					
         	} else {
